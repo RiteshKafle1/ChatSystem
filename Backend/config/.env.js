@@ -7,4 +7,5 @@ export const ENV = {
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
   STREAM_API_KEY: process.env.STREAM_API_KEY,
   STREAM_SECRET_KEY: process.env.STREAM_SECRET_KEY,
+  JWT_SECRET:process.env.JWT_SECRET,
 };
