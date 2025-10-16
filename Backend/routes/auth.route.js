@@ -1,5 +1,12 @@
 import express from "express";
-import { signup, login, logout } from "../controllers/auth.controller.js";
+import {
+  signup,
+  login,
+  logout,
+  updateProfile,
+} from "../controllers/auth.controller.js";
+import { authUser } from "../middlewares/auth.middleware.js";
+import { arcjetProtect } from "../middlewares/arcjet.middleware.js";
 
 const router = express.Router();
 
@@ -45,7 +52,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/signup", signup);
+router.post("/signup", arcjetProtect, signup);
 
 /**
  * @swagger
@@ -79,7 +86,7 @@ router.post("/signup", signup);
  *       500:
  *         description: Server error
  */
-router.post("/login", login);
+router.post("/login", arcjetProtect, login);
 
 /**
  * @swagger
@@ -115,6 +122,40 @@ router.post("/login", login);
  *       500:
  *         description: Server error
  */
-router.post("/logout", logout);
+router.post("/logout", arcjetProtect, logout);
+
+/**
+ * @swagger
+ * /api/auth/update-profile:
+ *   post:
+ *     summary: Update a user profile
+ *     tags: [Auth]
+ *     description: Update a user profile.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ 
+ *               email:
+ *                 type: string
+ *                 example: johndoe@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: Password@123
+ *     responses:
+ *       200:
+ *         description: User login success
+ *       400:
+ *         description: Bad request — invalid data or email already exists
+ *       500:
+ *         description: Server error
+ */
+router.post("/update-profile", arcjetProtect, authUser, updateProfile);
 
 export default router;

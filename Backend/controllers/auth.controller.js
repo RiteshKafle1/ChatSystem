@@ -36,3 +36,13 @@ export const logout = (_, res) => {
   res.cookie("jwt", "", { maxAge: 0 });
   return res.status(200).json({ message: "Logged out successfully" });
 };
+
+export const updateProfile=async(req,res)=>{
+  try {
+    
+  } catch (error) {
+        console.error("Error in update-profile controller:", error);
+    return res.status(500).json({ message: "Something went wrong" });
+    
+  }
+}

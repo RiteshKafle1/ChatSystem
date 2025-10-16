@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import validator from "validator";
 import User from "../models/user.model.js";
 import { generateToken } from "../utils/utils.js";
-import { responseHandler } from "../utils/responseHandler.js";
+import { responseHandler } from "../utils/responseHandler.util.js";
 
 export const signupService = async (fullName, email, password, res) => {
   try {
