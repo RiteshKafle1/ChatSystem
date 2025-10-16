@@ -2,45 +2,83 @@ import bcrypt from "bcryptjs";
 import validator from "validator";
 import User from "../models/user.model.js";
 import { generateToken } from "../utils/utils.js";
+import { responseHandler } from "../utils/responseHandler.js";
 
-export const signupService = async (fullName, email, password,res) => {
-  
-  if (!fullName || !email || !password) {
-    return { status: 400, message: "All fields are required" };
-  }
+export const signupService = async (fullName, email, password, res) => {
+  try {
+    if (!fullName || !email || !password) {
+      return responseHandler(false, 400, "All fields are required");
+    } 
+     
+    if (!validator.isEmail(email)) {
+      return responseHandler(false, 400, "Please enter a valid email");
+    }
+     
+    if (!validator.isStrongPassword(password)) {
+      return responseHandler(false, 400, "Password too weak");
+    }
 
-  if (!validator.isEmail(email)) {
-    return { status: 400, message: "Please enter a valid email" };
-  }
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return responseHandler(false, 400, "Email already exists");
+    }
 
-  if (!validator.isStrongPassword(password)) {
-    return { status: 400, message: "Password too weak" };
-  }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPass = await bcrypt.hash(password, salt);
 
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    return { status: 400, message: "Email already exists" };
-  }
+    const user = new User({
+      fullName,
+      email,
+      password: hashedPass,
+    });
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPass = await bcrypt.hash(password, salt);
-
-  const user = new User({
-    fullName,
-    email,
-    password: hashedPass,
-  });
-
-  await user.save();
-  const token = generateToken(user._id, res);
-  return {
-    status: 201,
-    data: {
+    await user.save();
+    const token = generateToken(user._id, res);
+    return responseHandler(true, 201, {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
       token,
-    },
-  };
+    });
+  } catch (error) {
+    console.error("Error in signupService:", error);
+
+    return responseHandler(false, 500, "Internal server error");
+  }
+};
+
+export const loginService = async (email, password, res) => {
+  try {
+    if (!email || !password) {
+      return responseHandler(false, 400, "All fields are required");
+    }
+
+    if (!validator.isEmail(email)) {
+      return responseHandler(false, 400, "Please enter a valid email");
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return responseHandler(false, 400, "Email already exists");
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return responseHandler(false, 400, "Invalid credentials");
+    }
+    const token = generateToken(user._id, res);
+    return responseHandler(true, 201, {
+      id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePic: user.profilePic,
+      token,
+    });
+  } catch (error) {
+    console.error("Error in loginService:", error);
+
+    return responseHandler(false, 500, "Internal server error");
+  }
 };

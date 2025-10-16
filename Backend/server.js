@@ -16,7 +16,7 @@ app.use(express.urlencoded());
 app.use(morgan('dev'));
 app.use('/api/auth',authRoutes)
 
-swaggerDocs(app,PORT);
+swaggerDocs(app);
 app.listen(PORT, () => {
   connectDB();
   console.log("Server is running", PORT);
