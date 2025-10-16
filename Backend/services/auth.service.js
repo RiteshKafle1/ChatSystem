@@ -8,12 +8,12 @@ export const signupService = async (fullName, email, password, res) => {
   try {
     if (!fullName || !email || !password) {
       return responseHandler(false, 400, "All fields are required");
-    } 
-     
+    }
+
     if (!validator.isEmail(email)) {
       return responseHandler(false, 400, "Please enter a valid email");
     }
-     
+
     if (!validator.isStrongPassword(password)) {
       return responseHandler(false, 400, "Password too weak");
     }
@@ -69,7 +69,7 @@ export const loginService = async (email, password, res) => {
       return responseHandler(false, 400, "Invalid credentials");
     }
     const token = generateToken(user._id, res);
-    return responseHandler(true, 201, {
+    return responseHandler(true, 200, {
       id: user._id,
       fullName: user.fullName,
       email: user.email,

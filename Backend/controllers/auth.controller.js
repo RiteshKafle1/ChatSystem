@@ -19,25 +19,20 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const result = await loginService(email, password, res);
 
-    return res.status(result.status).json(result.data);
+    if (result.success) {
+      return res.status(result.status).json(result.data);
+    } else {
+      return res.status(result.status).json(result.error);
+    }
   } catch (error) {
-    console.log("Error in registering user", error);
+    console.error("Error in login controller:", error);
     return res.status(500).json({ message: "Something went wrong" });
   }
 };
 
-export const logout = async (req, res) => {
-  try {
-    const { fullName, email, password } = req.body;
-
-    const result = await signupService(fullName, email, password, res);
-
-    return res.status(result.status).json(result.data);
-  } catch (error) {
-    console.log("Error in registering user", error);
-    return res.status(500).json({ message: "Something went wrong" });
-  }
+export const logout = (_, res) => {
+  res.cookie("jwt", "", { maxAge: 0 });
+  return res.status(200).json({ message: "Logged out successfully" });
 };

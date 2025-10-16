@@ -1,5 +1,5 @@
-import express from 'express';
-import { signup,login,logout } from '../controllers/auth.controller.js';
+import express from "express";
+import { signup, login, logout } from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
@@ -45,10 +45,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post('/signup', signup);
-
-
-
+router.post("/signup", signup);
 
 /**
  * @swagger
@@ -82,9 +79,7 @@ router.post('/signup', signup);
  *       500:
  *         description: Server error
  */
-router.post('/login', login);
-
-
+router.post("/login", login);
 
 /**
  * @swagger
@@ -94,7 +89,7 @@ router.post('/login', login);
  *     tags: [Auth]
  *     description: logout a user.
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         application/json:
  *           schema:
@@ -114,14 +109,12 @@ router.post('/login', login);
  *                 type: string
  *                 example: Password@123
  *     responses:
- *       201:
- *         description: User registered successfully
- *       400:
- *         description: Bad request — invalid data or email already exists
+ *       200:
+ *         description: User logout successfully
+ 
  *       500:
  *         description: Server error
  */
-router.post('/logout', logout);
-
+router.post("/logout", logout);
 
 export default router;
