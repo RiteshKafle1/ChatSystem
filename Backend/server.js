@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.route.js";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import messageRoutes from "./routes/message.route.js";
 
 import { swaggerDocs } from "./config/swagger.js";
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded());
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRoutes);
 
 swaggerDocs(app);
 app.listen(PORT, () => {
