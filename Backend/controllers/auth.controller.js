@@ -32,17 +32,25 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = (_, res) => {
-  res.cookie("jwt", "", { maxAge: 0 });
-  return res.status(200).json({ message: "Logged out successfully" });
-};
-
-export const updateProfile=async(req,res)=>{
+export const logout = async (req, res) => {
   try {
-    
+    const token = req.cookies.jwt;
+    if (!token) return res.status(400).json({ message: "No token found" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Delete token from Redis
+    await redisClient.del(`token:${decoded.userId}`);
+
+    res.clearCookie("token", {
+      httpOnly: true,
+
+      sameSite: "strict",
+    });
+
+    return res.json({ message: "Logged out successfully" });
   } catch (error) {
-        console.error("Error in update-profile controller:", error);
-    return res.status(500).json({ message: "Something went wrong" });
-    
+    console.error("Error in logout functionality", error);
+    return res.status(500).json({ message: "Error logging out" });
   }
-}
+};

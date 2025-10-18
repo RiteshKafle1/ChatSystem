@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
 import validator from "validator";
 import User from "../models/user.model.js";
-import { generateToken } from "../utils/utils.js";
+import { generateToken } from "../utils/token.util.js";
 import { responseHandler } from "../utils/responseHandler.util.js";
+import { redisClient } from "../config/redis.js";
 
 export const signupService = async (fullName, email, password, res) => {
   try {
@@ -34,6 +35,7 @@ export const signupService = async (fullName, email, password, res) => {
 
     await user.save();
     const token = generateToken(user._id, res);
+
     return responseHandler(true, 201, {
       id: user._id,
       fullName: user.fullName,
@@ -69,6 +71,9 @@ export const loginService = async (email, password, res) => {
       return responseHandler(false, 400, "Invalid credentials");
     }
     const token = generateToken(user._id, res);
+
+    await redisClient.setEx(`token:${user._id}`,3600,token);
+
     return responseHandler(true, 200, {
       id: user._id,
       fullName: user.fullName,
