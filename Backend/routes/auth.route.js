@@ -4,8 +4,9 @@ import {
   login,
   logout,
   updateProfile,
+  refreshToken
 } from "../controllers/auth.controller.js";
-import { authUser } from "../middlewares/auth.middleware.js";
+import {  verifyAccessToken } from "../middlewares/auth.middleware.js";
 import { arcjetProtect } from "../middlewares/arcjet.middleware.js";
 
 const router = express.Router();
@@ -156,6 +157,10 @@ router.post("/logout", arcjetProtect, logout);
  *       500:
  *         description: Server error
  */
-router.post("/update-profile", arcjetProtect, authUser, updateProfile);
+router.post("/update-profile", arcjetProtect, verifyAccessToken, updateProfile);
+
+router.post("/refresh", refreshToken);
+
+
 
 export default router;

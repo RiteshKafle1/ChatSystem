@@ -1,4 +1,6 @@
 import { loginService, signupService } from "../services/auth.service.js";
+import jwt from "jsonwebtoken";
+import { refreshAccessToken } from "../middlewares/auth.middleware.js";
 
 export const signup = async (req, res) => {
   try {
@@ -34,23 +36,20 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).json({ message: "No token found" });
+    const accessToken = req.cookies.accessToken;
+    if (accessToken) {
+      const decoded = jwt.decode(accessToken);
+      await redisClient.del(`token:${decoded.userId}`);
+    }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Delete token from Redis
-    await redisClient.del(`token:${decoded.userId}`);
-
-    res.clearCookie("token", {
-      httpOnly: true,
-
-      sameSite: "strict",
-    });
-
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     return res.json({ message: "Logged out successfully" });
   } catch (error) {
-    console.error("Error in logout functionality", error);
-    return res.status(500).json({ message: "Error logging out" });
+    console.log("Error logging out:", error);
+    res.status(500).json({ message: "Error logging out" });
   }
+};
+export const refreshToken = async (req, res) => {
+  await refreshAccessToken(req, res);
 };
