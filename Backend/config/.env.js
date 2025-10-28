@@ -11,4 +11,5 @@ export const ENV = {
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
   ARCJET_SECRET_KEY: process.env.ARCJET_SECRET_KEY,
   ARCJET_ENV: proces.env.ARCJET_ENV,
+  NODE_ENV:process.env.NODE_ENV,
 };
