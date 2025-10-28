@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import { ENV } from "./config/.env.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
-import { generateDocs } from "./docs/generateDocs.js";
+import { generateDocs } from './docs/generateDocs.js'
 
 export const app = express();
 export const server = createServer(app);
@@ -44,6 +44,7 @@ io.on("connection", (socket) => {
     io.emit("getOnlineUsers", Object.keys(userMap));
   });
 });
+
 
 if (process.env.NODE_ENV !== "test") {
   const PORT = ENV.PORT || 5000;
