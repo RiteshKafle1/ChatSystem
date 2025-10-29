@@ -7,7 +7,8 @@ import cookieParser from "cookie-parser";
 import { ENV } from "./config/.env.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
-import { generateDocs } from './docs/generateDocs.js'
+import { generateDocs } from './docs/generateDocs.js';
+import {globalLimiter} from './middlewares/ratelimit.js'
 
 export const app = express();
 export const server = createServer(app);
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(globalLimiter)
 app.use(morgan("dev"));
 
 app.use("/api/auth", authRoutes);
