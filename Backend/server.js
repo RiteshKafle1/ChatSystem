@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -8,13 +7,14 @@ import cookieParser from "cookie-parser";
 import { ENV } from "./config/.env.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
-import { generateDocs } from "./docs/generateDocs.js";
+import {connectDB} from './config/db.js'
+
 import { globalLimiter } from "./middlewares/ratelimit.js";
-import swaggerUi from "swagger-ui-express";
 
 export const app = express();
 export const server = createServer(app);
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,13 +22,11 @@ app.use(cookieParser());
 app.use(globalLimiter);
 app.use(morgan("dev"));
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-const swaggerDoc = generateDocs(app);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-
-// ⚡ Socket.io
+// Socket.io
 export const io = new Server(server, { cors: { origin: "*" } });
 export const userMap = {};
 
@@ -45,9 +43,11 @@ io.on("connection", (socket) => {
 });
 
 if (process.env.NODE_ENV !== "test") {
-  const PORT = ENV.PORT || 5000;
+  const PORT = ENV.PORT || 2500;
   server.listen(PORT, () => {
+    connectDB();
     console.log(`🚀 Server running at http://localhost:${PORT}`);
-    console.log(`📘 Swagger UI at http://localhost:${PORT}/api-docs`);
+
   });
 }
+
