@@ -6,17 +6,13 @@ export const arcjetProtect = async (req, res, next) => {
     const decision = await aj.protect(req);
 
     if (decision.isDenied) {
-      if (decision.reason.isRateLimit()) {
-        return res
-          .status(429)
-          .json({ message: "Rate Limit excedded.Please try again later" });
-      } else if (decision.reason.isBot()) {
+      if (decision.reason.isBot()) {
         return res.status(429).json({ message: "Bot access denied" });
-      }
-      else if(decision.reason.isShield()){
-        return res.status(403).json({message:'Access denied by Arcjet shield protection'});
-      }
-       else {
+      } else if (decision.reason.isShield()) {
+        return res
+          .status(403)
+          .json({ message: "Access denied by Arcjet shield protection" });
+      } else {
         return res
           .status(403)
           .json({ message: "Access denied due to security policy" });
@@ -30,6 +26,7 @@ export const arcjetProtect = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    console.log("Error in arcjetProject", error);
+    console.log("Error in arcjetProject Middleware", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };

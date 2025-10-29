@@ -1,14 +1,8 @@
 import expressListEndpoints from "express-list-endpoints";
-import swaggerUi from "swagger-ui-express";
 import fs from "fs";
-import {
-  Collection,
-  Item,
-  Request,
-  RequestBody,
-  Event,
-} from "postman-collection";
 
+import pkg from "postman-collection";
+const { Collection, Item, Request, RequestBody, Event } = pkg;
 
 export function generateDocs(app) {
   const endpoints = expressListEndpoints(app);
@@ -107,8 +101,6 @@ export function generateDocs(app) {
     "docs/postman_collection.json",
     JSON.stringify(postmanCollection, null, 2)
   );
-
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
   console.log("✅ Swagger + Postman files regenerated.");
   return swaggerDoc;

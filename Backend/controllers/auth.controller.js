@@ -47,9 +47,20 @@ export const logout = async (req, res) => {
     return res.json({ message: "Logged out successfully" });
   } catch (error) {
     console.log("Error logging out:", error);
-    res.status(500).json({ message: "Error logging out" });
+    return res.status(500).json({ message: "Error logging out" });
   }
 };
 export const refreshToken = async (req, res) => {
   await refreshAccessToken(req, res);
 };
+
+export const updateProfile=async(req,res)=>{
+  try {
+    
+  } catch (error) {
+    console.log('Error in update Profile function',error);   
+     return res.status(500).json({ message: "Internal Server Error" });
+
+    
+  }
+}

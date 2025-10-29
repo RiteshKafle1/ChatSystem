@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import Message from "../models/message.model.js";
+import {Message} from "../models/message.model.js";
 import { responseHandler } from "../utils/responseHandler.util.js";
 import { io,userMap } from "../server.js";
 

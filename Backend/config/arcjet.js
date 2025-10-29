@@ -13,10 +13,8 @@ export const aj = arcjet({
       blockSpoofed: true,
     }), //Detects headless browsers, automation tools, fake user-agents, and botnets
 
-    detectAbuse({
-      mode: "LIVE",
-      block: true,
-    }),
+
+    
     //Detects behavioral abuse (like login brute-force, scraping, spam requests)
   ],
 });
