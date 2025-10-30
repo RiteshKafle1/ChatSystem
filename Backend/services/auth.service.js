@@ -34,14 +34,15 @@ export const signupService = async (fullName, email, password, res) => {
     });
 
     await user.save();
-    const token = generateToken(user._id, res);
+    const token = await generateToken(user._id, res);
 
     return responseHandler(true, 201, {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
-      token,
+      accessToken:token.accessToken,
+      refreshToken:token.refreshToken,
     });
   } catch (error) {
     console.error("Error in signupService:", error);
@@ -70,9 +71,9 @@ export const loginService = async (email, password, res) => {
     if (!isPasswordCorrect) {
       return responseHandler(false, 400, "Invalid credentials");
     }
-    const token = generateToken(user._id, res);
+    const token = generateToken(user._id);
 
-    await redisClient.setEx(`token:${user._id}`,3600,token);
+    await redisClient.setEx(`token:${user._id}`, 3600, token);
 
     return responseHandler(true, 200, {
       id: user._id,

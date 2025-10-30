@@ -6,8 +6,19 @@ export const signup = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
     const result = await signupService(fullName, email, password, res);
+    console.log(result);
 
     if (result.success) {
+      res.cookie("accessToken", result.data.accessToken, {
+        maxAge: 15 * 60 * 100,
+        httpOnly: true,
+        sameSite: "strict",
+      });
+      res.cookie("refreshToken", result.data.refreshToken, {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: "strict",
+      });
       return res.status(result.status).json(result.data);
     } else {
       return res.status(result.status).json(result.error);
@@ -54,13 +65,10 @@ export const refreshToken = async (req, res) => {
   await refreshAccessToken(req, res);
 };
 
-export const updateProfile=async(req,res)=>{
+export const updateProfile = async (req, res) => {
   try {
-    
   } catch (error) {
-    console.log('Error in update Profile function',error);   
-     return res.status(500).json({ message: "Internal Server Error" });
-
-    
+    console.log("Error in update Profile function", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};

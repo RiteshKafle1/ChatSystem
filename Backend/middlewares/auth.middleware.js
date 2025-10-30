@@ -13,7 +13,7 @@ export const verifyAccessToken = async (req, res, next) => {
         .json({ message: "Unauthorizes -No token provided" });
     }
 
-    const decoded = jwt.verify(token, ENV.JWT_SECRET);
+    const decoded = jwt.verify(token, ENV.JWT_ACCESS_SECRET);
 
     if (!decoded) {
       return res
@@ -21,7 +21,7 @@ export const verifyAccessToken = async (req, res, next) => {
         .status.json({ message: "Unauthorizes -No token provided" });
     }
 
-    const redisToken = await redisClient.get(`token:${decoded.userId}`);
+    const redisToken = await redisClient.get(`access:${decoded.userId}`);
 
     if (!redisToken || redisToken != token) {
       return res.status(401).json({ message: "Session expired or invalid" });
@@ -45,6 +45,7 @@ export const refreshAccessToken = async (req, res) => {
     const decoded = jwt.verify(oldRefreshToken, ENV.JWT_REFRESH_SECRET);
 
     const storedToken = await redisClient.get(`refresh:${decoded.userId}`);
+
     if (storedToken !== oldRefreshToken) {
       return res
         .status(403)
@@ -56,12 +57,20 @@ export const refreshAccessToken = async (req, res) => {
       ENV.JWT_ACCESS_SECRET,
       { expiresIn: "15m" }
     );
+
     const newRefreshToken = jwt.sign(
       { userId: decoded.userId },
       ENV.JWT_REFRESH_SECRET,
       { expiresIn: "7d" }
     );
 
+    await redisClient.del(`access:${decoded.userId}`);
+    await redisClient.del(`refresh:${decoded.userId}`);
+
+    await redisClient.set(`token:${decoded.userId}`, newAccessToken, {
+      EX: 60 * 15,
+    });
+    
     await redisClient.set(`refresh:${decoded.userId}`, newRefreshToken, {
       EX: 7 * 24 * 60 * 60,
     });

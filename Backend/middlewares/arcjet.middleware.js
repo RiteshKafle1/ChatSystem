@@ -12,10 +12,6 @@ export const arcjetProtect = async (req, res, next) => {
         return res
           .status(403)
           .json({ message: "Access denied by Arcjet shield protection" });
-      } else {
-        return res
-          .status(403)
-          .json({ message: "Access denied due to security policy" });
       }
     }
 
