@@ -36,6 +36,7 @@ export const verifyAccessToken = async (req, res, next) => {
 };
 
 export const refreshAccessToken = async (req, res) => {
+  
   const oldRefreshToken = req.cookies.refreshToken;
 
   if (!oldRefreshToken)

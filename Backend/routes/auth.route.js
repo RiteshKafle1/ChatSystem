@@ -3,7 +3,6 @@ import {
   signup,
   login,
   logout,
-
   refreshToken,
 } from "../controllers/auth.controller.js";
 import { verifyAccessToken } from "../middlewares/auth.middleware.js";

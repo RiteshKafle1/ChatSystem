@@ -3,7 +3,6 @@ import {
   getAllContacts,
   getMessagesByuserId,
   sendMessage,
-
 } from "../controllers/message.controller.js";
 
 import { verifyAccessToken } from "../middlewares/auth.middleware.js";
