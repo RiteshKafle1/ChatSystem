@@ -7,7 +7,8 @@ import {
 
 export const getAllContacts = async (req, res) => {
   try {
-    const loggedInUser = req.user._id;
+    const loggedInUser = req.user.userId;
+
     const result = await allContactService(loggedInUser);
     if (result.success) {
       return res.status(result.status).json(result.data);

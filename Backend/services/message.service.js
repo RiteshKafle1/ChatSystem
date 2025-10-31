@@ -4,7 +4,8 @@ import { responseHandler } from "../utils/responseHandler.util.js";
 import { io, userMap } from "../server.js";
 
 export const allContactService = async (user) => {
-  try {
+  try { 
+    // getting all the users except me.
     const filteredUsers = await User.find({
       _id: { $ne: user },
     }).select("-password");
