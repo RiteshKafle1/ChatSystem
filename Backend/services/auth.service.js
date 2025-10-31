@@ -3,7 +3,6 @@ import validator from "validator";
 import User from "../models/user.model.js";
 import { generateToken } from "../utils/token.util.js";
 import { responseHandler } from "../utils/responseHandler.util.js";
-import { redisClient } from "../config/redis.js";
 
 export const signupService = async (fullName, email, password, res) => {
   try {
@@ -34,15 +33,15 @@ export const signupService = async (fullName, email, password, res) => {
     });
 
     await user.save();
-    const token = await generateToken(user._id, res);
+    // const token = await generateToken(user._id, res);
 
     return responseHandler(true, 201, {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
-      accessToken:token.accessToken,
-      refreshToken:token.refreshToken,
+      // accessToken: token.accessToken,
+      // refreshToken: token.refreshToken,
     });
   } catch (error) {
     console.error("Error in signupService:", error);
@@ -60,10 +59,10 @@ export const loginService = async (email, password, res) => {
     if (!validator.isEmail(email)) {
       return responseHandler(false, 400, "Please enter a valid email");
     }
-
     const user = await User.findOne({ email });
+
     if (!user) {
-      return responseHandler(false, 400, "Email already exists");
+      return responseHandler(false, 400, "Invalid Credentials");
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -71,16 +70,16 @@ export const loginService = async (email, password, res) => {
     if (!isPasswordCorrect) {
       return responseHandler(false, 400, "Invalid credentials");
     }
-    const token = generateToken(user._id);
-
-    await redisClient.setEx(`token:${user._id}`, 3600, token);
+    const token = await generateToken(user._id);
+    
 
     return responseHandler(true, 200, {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
-      token,
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken,
     });
   } catch (error) {
     console.error("Error in loginService:", error);

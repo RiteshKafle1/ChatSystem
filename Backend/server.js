@@ -15,12 +15,14 @@ export const app = express();
 export const server = createServer(app);
 
 // Middleware
+
 app.use(cors());
+app.use(morgan("dev"));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(globalLimiter);
-app.use(morgan("dev"));
+// app.use(globalLimiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -37,14 +39,14 @@ io.on("connection", (socket) => {
   // });
 
   const userId = socket.handshake.query.userId; //client is sending us the userId
-  console.log(" User Connected:", userId);
+  // console.log(" User Connected:", userId);
 
   if (userId) userMap[userId] = socket.id;
 
-  console.log("Socket id", socket.id);
+  // console.log("Socket id", socket.id);
 
   console.log("User Map", userMap);
-  console.log("Object.keys method", Object.keys(userMap)); //basically all the connected user with their userId are now stored in the array.
+  // console.log("Object.keys method", Object.keys(userMap)); //basically all the connected user with their userId are now stored in the array.
 
   io.emit("getOnlineUsers", Object.keys(userMap));
 

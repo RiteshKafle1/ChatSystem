@@ -12,9 +12,9 @@ import { signupLimiter, loginLimiter } from "../middlewares/ratelimit.js";
 
 const router = express.Router();
 
-router.post("/signup", arcjetProtect, signup);
+router.post("/signup", arcjetProtect,signup);
 
-router.post("/login", arcjetProtect, loginLimiter, login);
+router.post("/login", arcjetProtect,  login);
 
 router.post("/logout", arcjetProtect, logout);
 
