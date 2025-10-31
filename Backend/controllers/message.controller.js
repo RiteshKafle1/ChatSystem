@@ -1,6 +1,5 @@
 import {
   allContactService,
-  ChatService,
   MessagesByuserService,
   sendMessageService,
 } from "../services/message.service.js";
@@ -23,7 +22,7 @@ export const getAllContacts = async (req, res) => {
 
 export const getMessagesByuserId = async (req, res) => {
   try {
-    const loggedInUser = req.user._id; //myId
+    const loggedInUser = req.user.userId; //myId
     const { id } = req.params; //senderId
 
     const result = await MessagesByuserService(loggedInUser, id);
@@ -40,11 +39,11 @@ export const getMessagesByuserId = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body;
+    const { text } = req.body;
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId = req.user.userId;
 
-    const result = await sendMessageService(userId, id, text, image);
+    const result = await sendMessageService(userId, id, text);
     if (result.success) {
       return res.status(result.status).json(result.data);
     } else {
@@ -52,19 +51,6 @@ export const sendMessage = async (req, res) => {
     }
   } catch (error) {
     console.error("Error in getMessagesByuserId controller:", error);
-    return res.status(500).json({ message: "Something went wrong" });
-  }
-};
-
-export const getChats = async (req, res) => {
-  try {
-        const loggedInUser = req.user._id; //myId
-
-        await ChatService(loggedInUser)
-
-
-  } catch (error) {
-    console.error("Error in getChats controller:", error);
     return res.status(500).json({ message: "Something went wrong" });
   }
 };

@@ -14,7 +14,7 @@ socket.on("connect", () => {
   // });
 
   socket.on("newMessages", (data) => {
-    console.log(data);
+    console.log("Message : ",data);
   });
 });
 

@@ -13,15 +13,13 @@ const messageSchema = new mongoose.Schema(
       required: true,
     },
     text: {
-      String,
+      type: String,
     },
-    image: {
-      String,
+
+    seen: {
+      type: Boolean,
+      default: false,
     },
-    seen:{
-      type:Boolean,
-      default:false
-    }
   },
   { timestamps: true }
 );
