@@ -11,7 +11,7 @@ export const generateToken = async (userId) => {
     expiresIn: "7d",
   });
 
-  await redisClient.set(`access:${userId}`, accessToken, { EX: 60 * 15 });
+  await redisClient.set(`access:${userId}`, accessToken, { EX: 15 * 60 });
   await redisClient.set(`refresh:${userId}`, refreshToken, {
     EX: 7 * 24 * 60 * 60,
   });

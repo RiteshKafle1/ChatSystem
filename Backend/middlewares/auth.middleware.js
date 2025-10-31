@@ -67,10 +67,10 @@ export const refreshAccessToken = async (req, res) => {
     await redisClient.del(`access:${decoded.userId}`);
     await redisClient.del(`refresh:${decoded.userId}`);
 
-    await redisClient.set(`token:${decoded.userId}`, newAccessToken, {
-      EX: 60 * 15,
+    await redisClient.set(`access:${decoded.userId}`, newAccessToken, {
+      EX: 15 * 60,
     });
-    
+
     await redisClient.set(`refresh:${decoded.userId}`, newRefreshToken, {
       EX: 7 * 24 * 60 * 60,
     });
@@ -86,7 +86,11 @@ export const refreshAccessToken = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.json({ message: "Tokens rotated successfully" });
+    return res.json({
+      message: "Tokens rotated successfully",
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    });
   } catch (err) {
     return res.status(403).json({ message: "Invalid refresh token" });
   }

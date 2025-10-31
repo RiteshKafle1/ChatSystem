@@ -29,7 +29,7 @@ export const login = async (req, res) => {
 
     if (result.success) {
       res.cookie("accessToken", result.data.accessToken, {
-        maxAge: 15 * 60 * 100,
+        maxAge: 15 * 60 * 1000,
         httpOnly: true,
         sameSite: "strict",
       });
@@ -50,21 +50,6 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    const accessToken = req.cookies.accessToken;
-
-    if (accessToken) {
-      try {
-        const decoded = jwt.verify(accessToken, ENV.JWT_ACCESS_SECRET);
-
-        await redisClient.del(`access:${decoded.userId}`);
-        await redisClient.del(`refresh:${decoded.userId}`);
-      } catch (err) {
-        console.error("Token verification failed:", err.message);
-        return res.status(500).json({ message: "Logout failed" });
-      }
-    }
-
-    // Clear cookies
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: true,
@@ -87,10 +72,10 @@ export const refreshToken = async (req, res) => {
   await refreshAccessToken(req, res);
 };
 
-export const updateProfile = async (req, res) => {
-  try {
-  } catch (error) {
-    console.log("Error in update Profile function", error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+// export const updateProfile = async (req, res) => {
+//   try {
+//   } catch (error) {
+//     console.log("Error in update Profile function", error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
