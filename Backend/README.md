@@ -183,3 +183,8 @@ Server-side emits / listens:
 - Add stricter limits on auth endpoints (`/auth/login`, `/auth/signup`, `/auth/refresh`).
 - Integrate Arcjet in middleware to score incoming requests (IP, headers, behavior). If Arcjet flags suspicious, increase rate limit, require challenge, or block.
 - Log suspicious events for later review.
+
+👩‍💻 Author & Contribute
+
+Ritesh — built with Node, Socket.IO, Redis and Arcjet.
+Contributions welcome: fork, branch, PR. Add tests and docs for new features.
