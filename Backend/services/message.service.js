@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
-import {Message} from "../models/message.model.js";
+import { Message } from "../models/message.model.js";
 import { responseHandler } from "../utils/responseHandler.util.js";
-import { io,userMap } from "../server.js";
+import { io, userMap } from "../server.js";
 
 export const allContactService = async (user) => {
   try {
@@ -50,10 +50,13 @@ export const sendMessageService = async (userId, receiverId, text, image) => {
     });
     await newMessage.save();
 
-    const receiverSockerId=userMap[receiverId];
-    if(receiverSockerId){
-      io.to(receiverSockerId).emit('newMessages',newMessage);
-    }    
+    const receiverSockerId = userMap[receiverId];
+    if (receiverSockerId) {
+      io.to(receiverSockerId).emit("newMessages", newMessage);
+      console.log(" Sent message to:", receiverId);
+    } else {
+      console.log(" Receiver is offline.");
+    }
 
     return responseHandler(true, 200, {
       message: newMessage,

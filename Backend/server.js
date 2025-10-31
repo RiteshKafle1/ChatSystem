@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import { ENV } from "./config/.env.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
-import {connectDB} from './config/db.js'
+import { connectDB } from "./config/db.js";
 
 import { globalLimiter } from "./middlewares/ratelimit.js";
 
@@ -31,14 +31,28 @@ export const io = new Server(server, { cors: { origin: "*" } });
 export const userMap = {};
 
 io.on("connection", (socket) => {
-  const userId = socket.handshake.query.userId;
+  // socket.on("sendMessage", (data) => {
+  //   console.log(data);
+  //   console.log("Got message from client:", data.text);
+  // });
+
+  const userId = socket.handshake.query.userId; //client is sending us the userId
+  console.log(" User Connected:", userId);
+
   if (userId) userMap[userId] = socket.id;
+
+  console.log("Socket id", socket.id);
+
+  console.log("User Map", userMap);
+  console.log("Object.keys method", Object.keys(userMap)); //basically all the connected user with their userId are now stored in the array.
 
   io.emit("getOnlineUsers", Object.keys(userMap));
 
   socket.on("disconnect", () => {
     if (userId) delete userMap[userId];
     io.emit("getOnlineUsers", Object.keys(userMap));
+
+    console.log(" User disconnected:", userId);
   });
 });
 
@@ -47,7 +61,5 @@ if (process.env.NODE_ENV !== "test") {
   server.listen(PORT, () => {
     connectDB();
     console.log(`🚀 Server running at http://localhost:${PORT}`);
-
   });
 }
-
